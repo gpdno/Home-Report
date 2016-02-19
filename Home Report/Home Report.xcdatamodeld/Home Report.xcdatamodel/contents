@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="15D21" minimumToolsVersion="Xcode 7.0">
+    <entity name="Catagory" representedClassName=".Catagory" syncable="YES">
+        <attribute name="homeType" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="home" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Home" inverseName="catagory" inverseEntity="Home" syncable="YES"/>
+    </entity>
+    <entity name="Home" representedClassName=".Home" syncable="YES">
+        <attribute name="bath" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="bed" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="county" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="image" optional="YES" attributeType="Binary" storedInTruthFile="YES" syncable="YES"/>
+        <attribute name="price" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="sqft" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <relationship name="catagory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Catagory" inverseName="home" inverseEntity="Catagory" syncable="YES"/>
+        <relationship name="location" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Location" inverseName="home" inverseEntity="Location" syncable="YES"/>
+        <relationship name="status" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Status" inverseName="home" inverseEntity="Status" syncable="YES"/>
+    </entity>
+    <entity name="Location" representedClassName=".Location" syncable="YES">
+        <attribute name="city" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="home" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Home" inverseName="location" inverseEntity="Home" syncable="YES"/>
+    </entity>
+    <entity name="Status" representedClassName=".Status" syncable="YES">
+        <attribute name="isForSale" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <relationship name="home" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Home" inverseName="status" inverseEntity="Home" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Home" positionX="-81" positionY="-36" width="128" height="178"/>
+        <element name="Catagory" positionX="-297" positionY="9" width="128" height="73"/>
+        <element name="Status" positionX="117" positionY="234" width="128" height="73"/>
+        <element name="Location" positionX="106" positionY="-162" width="128" height="73"/>
+    </elements>
+</model>
