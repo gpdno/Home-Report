@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+
+        checkDataStore()
+        
         return true
     }
 
@@ -40,7 +44,60 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
+    
+    func checkDataStore() {
+        let coreData = CoreData()
+        let request = NSFetchRequest(entityName: "Home")
 
+        let homeCount = coreData.managedObjectContext.countForFetchRequest(request, error: NSErrorPointer.init())
+        if homeCount == 0 {
+            uploadSampleData()
+        }
+    }
+    
+    func uploadSampleData() {
+        let coreData = CoreData()
+        
+        let url = NSBundle.mainBundle().URLForResource("sample", withExtension: "json")
+        let data = NSData(contentsOfURL: url!)
+        
+        do {
+            let jsonResult = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
+            let jsonArray = jsonResult.valueForKey("home") as! NSArray
+            
+            for json in jsonArray {
+                let home = NSEntityDescription.insertNewObjectForEntityForName("Home", inManagedObjectContext: coreData.managedObjectContext) as! Home
+                home.county = json["county"] as? String
+                home.price = json["price"] as? NSNumber
+                home.bed = json["bed"] as? NSNumber
+                home.bath = json["bath"] as? NSNumber
+                home.sqft = json["sqft"] as? NSNumber
 
+                let category = NSEntityDescription.insertNewObjectForEntityForName("Category", inManagedObjectContext: coreData.managedObjectContext) as! Category
+                category.homeType = (json["category"] as! NSDictionary)["homeType"] as? String
+                home.category = category
+                
+                let status = NSEntityDescription.insertNewObjectForEntityForName("Status", inManagedObjectContext: coreData.managedObjectContext) as! Status
+                let isForSale = (json["status"] as! NSDictionary)["isForSale"] as! Bool
+                status.isForSale =  NSNumber(bool: isForSale)
+                home.status = status
+                
+                let imageName = json["image"] as? String
+                let image = UIImage(named: imageName!)
+                let imageData = UIImageJPEGRepresentation(image!, 1)
+                
+                home.image = imageData
+            }
+            
+            coreData.saveContext()
+            
+            let request = NSFetchRequest(entityName: "Home")
+            let homeCount = coreData.managedObjectContext.countForFetchRequest(request, error: NSErrorPointer.init())
+            print("Total home: \(homeCount)")
+        }
+        catch {
+            fatalError("Cannot upload sample data")
+        }
+    }
 }
 
